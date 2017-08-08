@@ -7,6 +7,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
+from django.utils import timezone
 #from django.template import loader
 
 from sample_app.models import Question, Choices
@@ -26,7 +27,9 @@ class HomePageView(generic.ListView):
 	context_object_name = "question_list"
 
 	def get_queryset(self):
-		return Question.objects.all()
+		return Question.objects.filter(
+				pub_date__lte = timezone.now()
+			).all()
 
 class DetailsView(generic.DetailView):
 
@@ -40,6 +43,9 @@ class DetailsView(generic.DetailView):
 	"""
 	model = Question
 	template_name = 'sample_app/details.html'
+
+	def get_queryset(self):
+		return Question.objects.filter(pub_date__lte = timezone.now())
 
 class ResultsView(generic.DetailView):
 	
